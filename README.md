@@ -1,6 +1,6 @@
 # Hello Lambda
 
-This project contains a Spring Cloud Function ready to be deployed on AWS Lambda.
+This project contains a Spring Cloud Function ready to be deployed on AWS Lambda with an HTTP Api Gateway.
 
 ### Build
 
