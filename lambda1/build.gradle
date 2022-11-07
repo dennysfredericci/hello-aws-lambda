@@ -1,0 +1,57 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.PropertiesFileTransformer
+
+plugins {
+    id 'org.springframework.boot' version '2.7.5'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.1'
+}
+
+group = 'br.com.fredericci'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('springCloudVersion', "2021.0.4")
+    set('awsLambdaEventsVersion', "2.0.2")
+    set('awsLambdaCoreVersion', "1.2.1")
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.cloud:spring-cloud-function-context'
+    implementation 'org.springframework.cloud:spring-cloud-function-adapter-aws'
+    implementation 'org.springframework:spring-web'
+    implementation "com.amazonaws:aws-lambda-java-events:${awsLambdaEventsVersion}"
+    implementation "com.amazonaws:aws-lambda-java-core:${awsLambdaCoreVersion}"
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+shadowJar {
+    archiveClassifier = ''
+    mergeServiceFiles()
+    append 'META-INF/spring.handlers'
+    append 'META-INF/spring.schemas'
+    append 'META-INF/spring.tooling'
+    transform(PropertiesFileTransformer) {
+        paths = ['META-INF/spring.factories']
+        mergeStrategy = "append"
+    }
+}
+
+assemble.dependsOn = [shadowJar]
+
+test {
+    useJUnitPlatform()
+}
